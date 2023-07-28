@@ -1,4 +1,12 @@
+/**
+ * KBの組立過程でのインタラクションを管理するクラス
+ */
 class KitBuild {
+  /**
+   * マップのIDを受け取り，それに対応するマップをDBから取得して返す関数．IDが無効な場合はエラーを投げる．
+   * @param {int} cmid マップのID
+   * @return {*} cmidに対応するマップ
+   */
   static openConceptMap(cmid) {
     if (!cmid) throw new Error(`Invalid Concept Map ID: ${cmid}`);
     this.ajax = Core.instance().ajax()

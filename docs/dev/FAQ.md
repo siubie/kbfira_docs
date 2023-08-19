@@ -83,4 +83,12 @@
 - Q. 開発したアプリケーションをサーバにデプロイするには，どうしたらいいですか？
   
   - A. （研究室内部向け）~~ひとまず，先輩の[引き継ぎ資料](https://hiroshimauniv.sharepoint.com/:w:/s/msteams_451b22-teams/Ef7jNV8yhzZInxgkspDEWS4Bj5nNdRhCjXPlpZnQN1thlg?e=5wj25g)を参照してください．補足等が必要になれば，別途，追記するようにします．~~
-    ↑先輩の引き継ぎ資料は，恐らく古いバージョンのシステムについてのものなので，一旦取り消し線を引いておきました（全く参考にならないわけではないと思うので，削除，はしていません）
+    ←先輩の引き継ぎ資料は，恐らく古いバージョンのシステムについてのものなので，一旦取り消し線を引いておきました（全く参考にならないわけではないと思うので，削除，はしていません）
+- Q. コントローラのファイルで
+  
+  ```
+  $this->ui->usePlugin('kitbuild-ui', 'kitbuild', 'kitbuild-analyzer', 'kitbuild-logger', 'kitbuild-collab', 'general-ui', 'showdown', 'highlight');
+  ```
+  
+  というような記述を見かけますが，これはどういう意味なのでしょうか？
+  - A. usePlugin()で.shared/config/plugins.ini内のキーを指定することにより，シンプルな記述で関連するファイルをまとめて読み込んだりすることができるようになっています．プラグインにも自作のものと公開されているものを読み込んでいるものがあり，例えば上の例だと'showdown'と'highlight'以外は前者に該当します．ちなみに，後者のうち，上の例にある'showdown'はMarkdownをHTMLに変換するためのライブラリで，highlightはWebページ上に表示したプログラミングコードなどに色を付けるためのライブラリになっています．

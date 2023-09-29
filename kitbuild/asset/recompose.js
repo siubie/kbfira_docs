@@ -7,9 +7,12 @@ $(() => {
 // so to log something, one could simply use:
 // Log.l('action', data);
 class L {
-  static log() {}
+  static log() { }
 }
 
+/**
+ * 再構成をつかさどるクラス
+ */
 class KitBuildApp {
   constructor() {
     this.kbui = KitBuildUI.instance(KitBuildApp.canvasId);
@@ -69,14 +72,29 @@ class KitBuildApp {
     this.handleRefresh();
   }
 
+  /**
+   * @function instance 新しくインスタンスを生成する
+   * @return {KitBuildApp} 新しく生成したインスタンス. 
+   * @memberof KitBuildApp 
+   */
   static instance() {
     KitBuildApp.inst = new KitBuildApp();
     return KitBuildApp.inst;
   }
-
+  /**
+   * @function setUser ※userの初期化?
+   * @param {Object} user 初期値としてnullが代入されている. 型は不明.
+   * @memberof KitBuildApp 
+   */
   setUser(user = null) {
     this.user = user;
   }
+
+  //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////次はここから/////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////
 
   setConceptMap(conceptMap) {
     console.warn("CONCEPT MAP SET:", conceptMap);
@@ -261,7 +279,7 @@ class KitBuildApp {
         username: username,
         kid: kid
       }).then((count) => {
-        if (options && options.countfb) 
+        if (options && options.countfb)
           $('.bt-feedback .count').html(`(&times;${count.feedback})`);
         if (options && options.countsubmit)
           $('.bt-submit .count').html(`(&times;${count.submit})`);
@@ -1089,29 +1107,29 @@ class KitBuildApp {
         })
         .show();
     });
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     /** 
      * 
      * Change password
     */
-     $('.app-navbar .cgpass').on('click', (e) => {
+    $('.app-navbar .cgpass').on('click', (e) => {
       e.preventDefault();
       this.session.get('user').then((user) => {
         // console.log(user);
@@ -1119,9 +1137,9 @@ class KitBuildApp {
         $('#cgpass-dialog .user-name').html(user.name);
         $('#form-cgpass input[name="username"]').val(user.username);
         cgpassDialog.show();
-      }, (error) => { 
+      }, (error) => {
         console.error(error);
-        UI.errorDialog(error); 
+        UI.errorDialog(error);
       });
     });
     $('#form-cgpass').on('submit', (e) => {
@@ -1129,33 +1147,33 @@ class KitBuildApp {
 
       let username = $('#form-cgpass input[name="username"]').val();
       // console.log(username);
-  
+
       let p0 = $('#password0').val();
       let p1 = $('#password1').val();
       let p2 = $('#password2').val();
-  
+
       let valid = true;
-  
+
       if (p0 === '') {
         $('.password0.invalid-feedback').text('Please provide your current password.');
         $('#password0').addClass('is-invalid');
         valid = false;
       } else $('#password0').removeClass('is-invalid').addClass('is-valid');
-  
+
       if (p1 === '') {
         $('.password1.invalid-feedback').text('New password cannot be empty.');
         $('#password1').addClass('is-invalid');
         valid = false;
       } else $('#password1').removeClass('is-invalid').addClass('is-valid');
-  
+
       if (p2 === '') {
         $('.password2.invalid-feedback').text('New password (repeat) cannot be empty.');
         $('#password2').addClass('is-invalid');
         valid = false;
       } else $('#password2').removeClass('is-invalid').addClass('is-valid');
-  
+
       if (!valid) return;
-  
+
       if (p1 != p2) {
         $('.password1.invalid-feedback').text('New password and new password (repeat) must be equal');
         $('#password1').addClass('is-invalid');
@@ -1169,10 +1187,10 @@ class KitBuildApp {
         $('#password1').removeClass('is-invalid');
         $('#password2').removeClass('is-invalid');
       }
-  
+
       $('#password1').addClass('is-valid');
       $('#password2').addClass('is-valid');
-  
+
       this.ajax.post('RBACApi/changeUserPassword',
         {
           username: username,
@@ -1190,17 +1208,17 @@ class KitBuildApp {
         // console.error(error);
         UI.errorDialog('Password change error. Incorrect old password or new password is equal to old password.').show();
       });
-  
-  
-  
+
+
+
       // let valid = e.currentTarget.checkValidity();
       // console.log(valid);
       // $(e.currentTarget).addClass('was-validated');
-  
-  
-  
+
+
+
     });
-    
+
     /**
      *
      * Logout
@@ -1354,9 +1372,9 @@ class KitBuildApp {
 
   initCollab(user) {
     KitBuildApp.collabInst = KitBuildCollab.instance("kitbuild", user, this.canvas, {
-        host: this.config.get('collabhost'),
-        port: this.config.get('collabport'),
-      }
+      host: this.config.get('collabhost'),
+      port: this.config.get('collabport'),
+    }
     );
     KitBuildApp.collabInst.off("event", KitBuildApp.onCollabEvent);
     KitBuildApp.collabInst.on("event", KitBuildApp.onCollabEvent);
@@ -1415,7 +1433,7 @@ KitBuildApp.collab = (action, ...data) => {
       {
         KitBuildApp.collabInst
           .getMapState()
-          .then((result) => {})
+          .then((result) => { })
           .catch((error) =>
             UI.error("Unable to get map state: " + error).show()
           );
@@ -1425,7 +1443,7 @@ KitBuildApp.collab = (action, ...data) => {
       {
         KitBuildApp.collabInst
           .sendMapState(...data)
-          .then((result) => {})
+          .then((result) => { })
           .catch((error) =>
             UI.error("Unable to send map state: " + error).show()
           );
@@ -1436,7 +1454,7 @@ KitBuildApp.collab = (action, ...data) => {
         KitBuildApp.collabInst.tools
           .get("channel")
           .getChannels()
-          .then((channels) => {})
+          .then((channels) => { })
           .catch((error) =>
             UI.error("Unable to get channels: " + error).show()
           );
@@ -1958,7 +1976,7 @@ KitBuildApp.parseOptions = (optionJsonString, defaultValueIfNull) => {
 };
 
 KitBuildApp.updateSignInOutButton = () => {
-  Core.instance().session().getAll().then(sessions => { 
+  Core.instance().session().getAll().then(sessions => {
     // console.log(sessions)
     if (sessions.user) {
       $('.bt-sign-in').addClass('d-none');

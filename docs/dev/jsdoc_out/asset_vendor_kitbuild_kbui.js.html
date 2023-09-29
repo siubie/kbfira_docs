@@ -31,7 +31,7 @@
     <input type="text" id="nav-search" placeholder="Search" />
     
     
-    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="KitBuild.html">KitBuild</a><ul class='methods'><li data-type='method'><a href="KitBuild.html#.getKitListOfGroups">getKitListOfGroups</a></li><li data-type='method'><a href="KitBuild.html#.getTextOfKit">getTextOfKit</a></li><li data-type='method'><a href="KitBuild.html#.getTopicListOfGroups">getTopicListOfGroups</a></li><li data-type='method'><a href="KitBuild.html#.getUserListOfGroups">getUserListOfGroups</a></li><li data-type='method'><a href="KitBuild.html#.openConceptMap">openConceptMap</a></li><li data-type='method'><a href="KitBuild.html#.openExtendedLearnerMap">openExtendedLearnerMap</a></li><li data-type='method'><a href="KitBuild.html#.openKitMap">openKitMap</a></li><li data-type='method'><a href="KitBuild.html#.openKitSet">openKitSet</a></li><li data-type='method'><a href="KitBuild.html#.openLearnerMap">openLearnerMap</a></li><li data-type='method'><a href="KitBuild.html#.updateKitOption">updateKitOption</a></li></ul></li><li><a href="KitBuildCanvas.html">KitBuildCanvas</a><ul class='methods'><li data-type='method'><a href="KitBuildCanvas.html#attachEventListener">attachEventListener</a></li><li data-type='method'><a href="KitBuildCanvas.html#detachEventListener">detachEventListener</a></li><li data-type='method'><a href="KitBuildCanvas.html#.instance">instance</a></li></ul></li><li><a href="KitBuildRBAC.html">KitBuildRBAC</a><ul class='methods'><li data-type='method'><a href="KitBuildRBAC.html#.register">register</a></li><li data-type='method'><a href="KitBuildRBAC.html#.signIn">signIn</a></li></ul></li></ul>
+    <h2><a href="index.html">Home</a></h2><h3>Classes</h3><ul><li><a href="KitBuild.html">KitBuild</a><ul class='methods'><li data-type='method'><a href="KitBuild.html#.getKitListOfGroups">getKitListOfGroups</a></li><li data-type='method'><a href="KitBuild.html#.getTextOfKit">getTextOfKit</a></li><li data-type='method'><a href="KitBuild.html#.getTopicListOfGroups">getTopicListOfGroups</a></li><li data-type='method'><a href="KitBuild.html#.getUserListOfGroups">getUserListOfGroups</a></li><li data-type='method'><a href="KitBuild.html#.openConceptMap">openConceptMap</a></li><li data-type='method'><a href="KitBuild.html#.openExtendedLearnerMap">openExtendedLearnerMap</a></li><li data-type='method'><a href="KitBuild.html#.openKitMap">openKitMap</a></li><li data-type='method'><a href="KitBuild.html#.openKitSet">openKitSet</a></li><li data-type='method'><a href="KitBuild.html#.openLearnerMap">openLearnerMap</a></li><li data-type='method'><a href="KitBuild.html#.updateKitOption">updateKitOption</a></li></ul></li><li><a href="KitBuildApp.html">KitBuildApp</a><ul class='methods'><li data-type='method'><a href="KitBuildApp.html#handleRefresh">handleRefresh</a></li><li data-type='method'><a href="KitBuildApp.html#handleRefresh">handleRefresh</a></li><li data-type='method'><a href="KitBuildApp.html#.collab">collab</a></li><li data-type='method'><a href="KitBuildApp.html#.collab">collab</a></li><li data-type='method'><a href="KitBuildApp.html#.instance%25E6%2596%25B0%25E3%2581%2597%25E3%2581%258F%25E3%2582%25A4%25E3%2583%25B3%25E3%2582%25B9%25E3%2582%25BF%25E3%2583%25B3%25E3%2582%25B9%25E3%2582%2592%25E7%2594%259F%25E6%2588%2590%25E3%2581%2599%25E3%2582%258B">instance 新しくインスタンスを生成する</a></li><li data-type='method'><a href="KitBuildApp.html#.parseKitMapOptions">parseKitMapOptions</a></li><li data-type='method'><a href="KitBuildApp.html#.parseKitMapOptions">parseKitMapOptions</a></li><li data-type='method'><a href="KitBuildApp.html#.setUseruser%25E3%2581%25AE%25E5%2588%259D%25E6%259C%259F%25E5%258C%2596?">setUser userの初期化?</a></li></ul></li><li><a href="KitBuildCanvas.html">KitBuildCanvas</a><ul class='methods'><li data-type='method'><a href="KitBuildCanvas.html#attachEventListener">attachEventListener</a></li><li data-type='method'><a href="KitBuildCanvas.html#detachEventListener">detachEventListener</a></li><li data-type='method'><a href="KitBuildCanvas.html#.instance">instance</a></li></ul></li><li><a href="KitBuildRBAC.html">KitBuildRBAC</a><ul class='methods'><li data-type='method'><a href="KitBuildRBAC.html#.register">register</a></li><li data-type='method'><a href="KitBuildRBAC.html#.signIn">signIn</a></li></ul></li></ul>
     
 </nav>
 
@@ -96,8 +96,7 @@ class KitBuildCanvas {
 
   /**
   * キャンバスオブジェクトごとにシングルトンインスタンス(アプリ内に１つしかないことが保証されているインスタンス)を生成する
-  * ※画面にはキャンバス要素は複数ある
-  * ※キャンバスオブジェクトごとに生成してたら１つにならなくない？わかんね～
+  * @todo 画面にはキャンバス要素は複数ある. キャンバスオブジェクトごとに生成してたら１つにならなくない？わかんね～
   * @param {string} canvasId キャンバスのID
   * @param {any} options キットのオプション（多分）
   * @return {*} KitBuildCanvasインスタンス
@@ -119,7 +118,7 @@ class KitBuildCanvas {
   }
 
   /**
-  * ツールバーとかキャンバスツールとか諸々のイベントリスナーを一気にでタッチする。
+  * ツールバーとかキャンバスツールとか諸々のイベントリスナーを一気にデタッチする。
   * @param {string} id 
   */
   detachEventListener(id) {
@@ -1644,7 +1643,7 @@ class KitBuildUI {
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Fri Sep 29 2023 16:59:03 GMT+0900 (日本標準時) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 4.0.2</a> on Fri Sep 29 2023 18:37:55 GMT+0900 (日本標準時) using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>

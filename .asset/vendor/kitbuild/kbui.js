@@ -1,3 +1,6 @@
+/**
+ * ツールバーの要素を定義していたり、イベントリスナーの処理を定義するクラス
+ */
 class KitBuildCanvas {
 
   constructor(canvasId, options) {
@@ -42,23 +45,45 @@ class KitBuildCanvas {
     
   }
 
+  /**
+  * キャンバスオブジェクトごとにシングルトンインスタンス(アプリ内に１つしかないことが保証されているインスタンス)を生成する
+  * ※画面にはキャンバス要素は複数ある
+  * ※キャンバスオブジェクトごとに生成してたら１つにならなくない？わかんね～
+  * @param {string} canvasId キャンバスのID
+  * @param {any} options キットのオプション（多分）
+  * @return {*} KitBuildCanvasインスタンス
+  */
   // Singleton instantiator for each Canvas object
   static instance(canvasId, options) {
     return new KitBuildCanvas(canvasId, options)
   }
 
+  /**
+  * ツールバーとかキャンバスツールとか諸々のイベントリスナーを一気に引っ張ってくる。
+  * @param {string} id 
+  * @param {any} listener 
+  */
   attachEventListener(id, listener) {
     this.toolbar.attachEventListener(id, listener)
     this.canvasTool.attachEventListener(id, listener)
     this.eventListeners.set(id, listener)
   }
 
+  /**
+  * ツールバーとかキャンバスツールとか諸々のイベントリスナーを一気にでタッチする。
+  * @param {string} id 
+  */
   detachEventListener(id) {
     this.toolbar.detachEventListener(id)
     this.canvasTool.detachEventListener(id)
     this.eventListeners.delete(id)
   }
 
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////次はここから/////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////
   broadcastEvent(event, data) { // console.warn(event, data)
     this.eventListeners.forEach(listener => {
       if (listener != null && typeof listener.onCanvasEvent == 'function')

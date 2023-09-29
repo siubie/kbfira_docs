@@ -3,17 +3,24 @@
         "allowUnknownTags": false
     },
     "source": {
-        "include": [".asset/vendor/kitbuild"],
+        "include": [
+            ".",
+            ".asset/vendor/general-ui",
+            ".asset/vendor/kitbuild"
+        ],
         "includePattern": "\\.js$",
-        "excludePattern": "(node_modules/|docs)"
+        "exclude": [
+            "node_modules",
+            "docs"
+        ]
     },
     "plugins": [
         "plugins/markdown"
     ],
     "opts": {
-        "template": "C:/Users/k-sei/AppData/Roaming/nvm/v12.15.0/node_modules/docdash",
+        "template": "node_modules/docdash",
         "encoding": "utf8",
-        "destination": "docs/dev/.asset/vendor/kitbuild",
+        "destination": "docs/dev/jsdoc_out",
         "recurse": true,
         "verbose": true
     },
@@ -24,13 +31,13 @@
     "docdash": {
         "sectionOrder": [
             "Namespaces",
-             "Classes",
-             "Modules",
-             "Externals",
-             "Events",
-             "Mixins",
-             "Tutorials",
-             "Interfaces"
+            "Classes",
+            "Modules",
+            "Externals",
+            "Events",
+            "Mixins",
+            "Tutorials",
+            "Interfaces"
         ],
         "search": true
     }

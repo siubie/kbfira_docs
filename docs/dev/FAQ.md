@@ -93,5 +93,14 @@
   というような記述を見かけますが，これはどういう意味なのでしょうか？
   - A. usePlugin()で.shared/config/plugins.ini内のキーを指定することにより，シンプルな記述で関連するファイルをまとめて読み込んだりすることができるようになっています．プラグインにも自作のものと公開されているものを読み込んでいるものがあり，例えば上の例だと'showdown'と'highlight'以外は前者に該当します．ちなみに，後者のうち，上の例にある'showdown'はMarkdownをHTMLに変換するためのライブラリで，highlightはWebページ上に表示したプログラミングコードなどに色を付けるためのライブラリになっています．
 
-  - Q. リンクにボタンを追加させたいのですが，どうすればよいのでしょうか？
-  - A.  kit-build/asset/kbui.canvas.tool.jsに追加させたいボタンの機能に関するclassを追加する．kit-build/asset/recompose.js（学習者の操作の際に読み込まれるファイル）のpp.368-372に，kbui.canvas.tool.jsに追加したclassを呼び出す記述を追加する．
+- Q. リンクにボタンを追加させたいのですが，どうすればよいのでしょうか？
+  - A.  kit-build/asset/kbui.canvas.tool.jsに追加させたいボタンの機能に関するclassを追加する．kit-build/asset/recompose.js（学習者の操作の際に読み込まれるファイル）に，kbui.canvas.tool.jsに追加したclassを呼び出す記述を追加する．ボタンはbootstrap Iconsからテンプレートを使う（ただし，大きさの調整のためにSVGタグのviewBoxの値を"-4 -4 24 24"に変更する）． 
+  kbui.canvas.tool.jsに記述する内容
+  ```
+  showOn: KitBuildCanvasTool.SH_CONCEPT | KitBuildCanvasTool.SH_LINK, // ノードならSH_CONCEPTで，リンクならSH_LINK
+  dialogContainerSelector: 'body',
+  color: "#dc3545",
+  width: '300px',
+  icon: , // Iconsから得たテンプレート
+  gridPos: { x: -1, y: -1 },　// ボタンの位置の設定
+  ```

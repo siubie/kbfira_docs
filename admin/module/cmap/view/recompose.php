@@ -96,21 +96,7 @@
     <i class="bi bi-x-lg bt-close bt-x" role="button"></i>
   </h6>
   <div class="card-body position-relative overflow-hidden overflow-scroll d-flex flex-fill mb-3">
-    <div class="content text-secondary">
-      <p>Est ex sunt exercitation exercitation voluptate veniam ad minim et magna ea sint. Sint Lorem consequat ex ullamco sint irure labore nisi nulla pariatur culpa quis excepteur officia. Exercitation qui consequat ipsum labore nostrud cillum incididunt eiusmod aliquip.</p>
-
-      <p>
-      Labore reprehenderit laborum excepteur eiusmod et. Culpa laborum excepteur irure mollit adipisicing ut anim sunt veniam. Quis laborum cupidatat id id ea do dolor velit. Aliqua aliquip exercitation proident consequat ullamco anim aute occaecat deserunt cillum deserunt. Esse magna labore dolor anim amet.</p>
-
-      <p>
-      Et enim irure excepteur enim est proident est tempor tempor velit. Laborum ex exercitation nulla anim incididunt nisi fugiat cillum officia fugiat dolor ad proident. Ad laborum eiusmod fugiat laboris sunt labore. Enim consectetur tempor minim nisi proident nulla ex pariatur et eu Lorem do sint non. Minim adipisicing do fugiat magna fugiat veniam do veniam.</p>
-
-      <p>
-      Dolore ipsum reprehenderit sint anim. Minim non reprehenderit quis amet est exercitation incididunt ad dolore do proident. Reprehenderit ullamco aute irure consequat sunt nulla sunt exercitation. In ullamco occaecat ipsum Lorem elit labore consectetur cillum sunt velit.</p>
-
-      <p>
-      Non nulla exercitation consequat minim anim qui eiusmod deserunt aliquip proident ea laborum consequat amet. Nisi aliqua sit commodo commodo aliquip sunt sint qui do laboris nisi cupidatat. Occaecat proident et reprehenderit esse dolor.</p>
-    </div>
+    <div class="content text-secondary"></div>
   </div>
   <div class="card-footer d-flex justify-content-between align-items-center">
     <span>
@@ -136,5 +122,29 @@
   <div class="card-footer text-end">
     <button class="btn btn-sm btn-secondary bt-cancel bt-close px-3"><?php echo Lang::l('ok'); ?></button>
     <button class="btn btn-sm btn-primary bt-modify px-3 ms-1">Modify My Map</button>
+  </div>
+</div>
+
+<div id="feedback-mode-dialog" class="card d-none">
+  <div class="card-body text-center">
+    <div class="feedback-content text-center d-flex align-items-center justify-content-center">
+      <i class="bi bi-exclamation-triangle fs-3 text-danger mx-3"></i> You are in Feedback mode.
+    </div>
+    <button class="btn bt-modify btn-warning btn-sm mt-2">Continue Kit-Building</button>
+  </div>
+</div>
+
+<div id="bug-dialog" class="card d-none">
+  <h6 class="card-header d-flex">
+    <span class="drag-handle flex-fill">
+      <i class="dialog-icon bi bi-bug-fill me-2 text-danger"></i> 
+      <span class="dialog-title text-small"><small>Bug: Select Correct Concept</small></span></span>
+    <i class="bi bi-x-lg bt-close bt-x" role="button"></i>
+  </h6>
+  <div class="card-body">
+    <div class="bug-options"></div>
+  </div>
+  <div class="card-footer text-end">
+    <button class="btn btn-sm btn-secondary bt-cancel bt-close px-3"><?php echo Lang::l('ok'); ?></button>
   </div>
 </div>

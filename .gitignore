@@ -1,7 +1,3 @@
 server/node_modules
 /server/package-lock.json
-server
-server/
-.shared/config/config.ini
-.shared/config/db.ini
-kitbuild/runtime/config.ini
+mysql-data/

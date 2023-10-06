@@ -127,6 +127,11 @@ class KitBuild {
     return this.ajax.get(`kitBuildApi/getTextOfKit/${kid}`);
   }
 
+  static getText(tid = '') {
+    this.ajax = Core.instance().ajax()
+    return this.ajax.get(`kitBuildApi/getTextOfTopic/${tid}`);
+  }
+
 }
 
 /**

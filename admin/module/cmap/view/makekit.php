@@ -260,3 +260,40 @@
     <button class="btn btn-sm btn-secondary bt-close px-4"><?php echo Lang::l('close'); ?></button>
   </div>
 </div>
+
+<div id="kit-content-dialog" class="card d-none">
+  <h6 class="card-header d-flex">
+    <span class="drag-handle flex-fill"><i class="dialog-icon bi bi-file-text"></i> <span class="dialog-title">Content</span></span>
+    <i class="bi bi-x-lg bt-close bt-x" role="button"></i>
+  </h6>
+  <div class="card-body position-relative overflow-hidden overflow-scroll d-flex flex-fill mb-3">
+    <div class="content text-secondary"></div>
+  </div>
+  <div class="card-footer d-flex justify-content-between align-items-center">
+    <span>
+      <span class="bt-scroll-top btn btn-sm ms-1 btn-primary px-3"><i class="bi bi-chevron-bar-up"></i> Back to Top</span>
+      <span class="bt-scroll-more btn btn-sm ms-1 btn-primary px-3"><i class="bi bi-chevron-down"></i> More</span>
+    </span>
+    <span>
+      <button class="btn btn-sm btn-secondary bt-close px-3"><?php echo Lang::l('close'); ?></button>
+      <button class="btn btn-sm resize-handle pe-0 ps-3"><i class="bi bi-textarea-resize"></i></button>
+    </span>
+  </div>
+</div>
+
+<div id="bug-dialog" class="align-items-center" style="display: none;">
+  <div class="card">
+    <div class="card-body">
+      <span class="mt-2 mb-1 d-block"><small>Correct Label</small></span>
+      <input type="text" class="form-control form-control-sm mb-1 input-correct-label" placeholder="Correct Label" aria-label="New Topic Name" aria-describedby="button-create-new-topic">
+      <span class="mt-2 mb-1 d-block"><small>Bug Label</small></span>
+      <input type="text" class="form-control form-control-sm mb-1 input-bug-label" placeholder="Bug Label" aria-label="New Topic Name" aria-describedby="button-create-new-topic">
+      <small>Separate bug labels with comma as the options for students to choose.</small>
+      <hr>
+      <div class="d-flex justify-content-end">
+        <button class="btn btn-sm btn-danger bt-remove-bug" type="button"><i class="bi bi-x-lg"></i> Remove Bug</button>
+        <button class="btn btn-sm btn-primary bt-set-bug ms-1" type="button"><i class="bi bi-bug"></i> Set Bug</button>
+      </div>
+    </div>
+  </div>
+</div>

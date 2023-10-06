@@ -71,8 +71,32 @@ class KitBuildCanvasTool {
     }
   }
 
+
+  /**
+   * @function _showOn showOn()の実質的な中身
+   * @description （元々あったコメントをコピペ：）default showOn wrapper
+   * @description （元々あったコメントをコピペ：）when tool/app overrides showOn()
+   * @todo この関数は値を返すだけであり，実際に表示を制御しているわけではない．それをどの部分が担当しているかはよく分からないので，調べる必要がある．←showOn()の使用例を調べていたらこのファイルの下にあるdrawTools()が出てきたので，その関数とかでツールの描画を行っているのかもしれない．
+   * @param {number} what ツールを表示したい部品の種類．現状，この関数はshowOn()の中からのみ呼び出されているが，showOn()の方はt.showOn(KitBuildCanvasTool.SH_EDGE)とかt.showOn(KitBuildCanvasTool.SH_CONTEXT)という形で呼び出されており，引数の中身はいずれも数値（この下で定義されている）となっている．
+   * @return {number} 引数として与えたwhatとthis.settings.showOn（初期値はKitBuildCanvasTool.SH_LINKだが，個々のツールで変更可能）のビット論理積
+   * @todo 返り値となっているビット論理積について，シチュエーション別に計算結果がいい感じになるよう個々の変数の値が調整されているのだと思う．それについては，もう少し詳しく調べる必要がある．
+   * @memberof KitBuildCanvasTool
+   */
+  // default showOn wrapper 
+  // when tool/app overrides showOn()
+  _showOn(what) { 
+    return what & this.settings.showOn
+  }
+
+  /**
+   * @function showOn ツールをどの種類の部品（基本的にはノード and/or リンク）に対して表示するかを決定する関数
+   * @param {number} what ツールを表示したい部品の種類．現状，この関数はt.showOn(KitBuildCanvasTool.SH_EDGE)とかt.showOn(KitBuildCanvasTool.SH_CONTEXT)という形で呼び出されており，引数の中身はいずれも数値（この下で定義されている）となっている．
+   * @param {Object} node Cytoscape.jsにおけるノードのオブジェクトとかだと思うのだが，現状，この関数の呼び出し時に渡されている事例が見当たらないのと，この関数の中でも使われていない
+   * @return {number} _showOn()に引数として与えたwhatを渡した結果．具体的には，whatとthis.settings.showOn（初期値はKitBuildCanvasTool.SH_LINKだが，個々のツールで変更可能）のビット論理積が返ってくる．
+   * @memberof KitBuildCanvasTool
+   */
   showOn(what, node) {
-    return what & this.settings.showOn;
+    return this._showOn(what);
   }
 
   showOnMulti(concepts, edges) {
@@ -341,7 +365,7 @@ class KitBuildDuplicateTool extends KitBuildCanvasTool {
   }
 
   actionMulti(event, e, nodes) {
-    console.log(nodes.length);
+    // console.log(nodes.length);
     if (!nodes) return;
     let duplicates = nodes.unselect().jsons();
     let duplicateNodes = [];
@@ -637,7 +661,7 @@ class KitBuildCreateConceptTool extends KitBuildCanvasTool {
     let color = nodeCreateTool
       ? nodeCreateTool.textColor(backgroundColor)
       : "#000000";
-    console.log(backgroundColor, color);
+    // console.log(backgroundColor, color);
     let floatingLabel = `<form class="kb-floating-label position-absolute border rounded d-flex align-items-center justify-content-center" style="width: 180px; height: 64px; background-color: ${backgroundColor}; color: ${color};"><input class="kb-node-label text-center border-0 flex-fill" value="${content}" style="background-color:transparent; height:100%;  color: ${color};"></form>`;
     $(".kb-floating-label").remove();
     $(floatingLabel)
@@ -1090,6 +1114,361 @@ class KitBuildPropositionAuthorTool extends KitBuildCanvasTool {
   }
 }
 
+/**
+ * マップ-テキスト対応づけ機能［教授者側：個々の部品に対応するテキストの範囲を指定，学習者側：個々の部品について，教授者側で指定した範囲を確認可能］を提供するツール
+ */
+class KitBuildTextSelectionTool extends KitBuildCanvasTool {
+  /**
+   * @constructs KitBuildTextSelectionTool
+   * @description options.elementが存在しなければコンソールに警告を出し，そうでなければそれに対するイベントハンドラを定義する．
+   * 画面左側のメニューには表示されていないが，イベントハンドラについてもJSDoc形式でコメントを入れているので，そちらも参照されたい．
+   * @param {Object} canvas Cytoscape.jsの描画対象となるcanvas要素
+   * @param {Object} options ツール描画にあたってのオプション
+   * @todo オプションの一覧について，ドキュメントとしてまとめた方がいいのかもしれない
+   * @todo optionsがいつ・どこから渡されるかよく分かっていないが，中身は"{element: "#kit-content-dialog .content"}"のようになっていた
+   * @todo broadcastEventは上で実装されているので，後で読む
+   */
+  constructor(canvas, options) {
+    super(
+      canvas,
+      Object.assign(
+        {
+          showOn: KitBuildCanvasTool.SH_CONCEPT | KitBuildCanvasTool.SH_LINK,
+          color: "#24b381",
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-input-cursor-text" viewBox="-4 -4 24 24"><path fill-rule="evenodd" d="M5 2a.5.5 0 0 1 .5-.5c.862 0 1.573.287 2.06.566.174.099.321.198.44.286.119-.088.266-.187.44-.286A4.165 4.165 0 0 1 10.5 1.5a.5.5 0 0 1 0 1c-.638 0-1.177.213-1.564.434a3.49 3.49 0 0 0-.436.294V7.5H9a.5.5 0 0 1 0 1h-.5v4.272c.1.08.248.187.436.294.387.221.926.434 1.564.434a.5.5 0 0 1 0 1 4.165 4.165 0 0 1-2.06-.566A4.561 4.561 0 0 1 8 13.65a4.561 4.561 0 0 1-.44.285 4.165 4.165 0 0 1-2.06.566.5.5 0 0 1 0-1c.638 0 1.177-.213 1.564-.434.188-.107.335-.214.436-.294V8.5H7a.5.5 0 0 1 0-1h.5V3.228a3.49 3.49 0 0 0-.436-.294A3.166 3.166 0 0 0 5.5 2.5.5.5 0 0 1 5 2z"/><path d="M10 5h4a1 1 0 0 1 1 1v4a1 1 0 0 1-1 1h-4v1h4a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-4v1zM6 5V4H2a2 2 0 0 0-2 2v4a2 2 0 0 0 2 2h4v-1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h4z"/></svg>',
+          gridPos: { x: 0, y: -1 },
+        },
+        options
+      )
+    );
+    if (!options.element) console.warning('KitBuildSelectTextTool: Required selection element container selector is not set, e.g., #content');
+    else {
+      let el = $(options.element).get(0); // document.getElementByIdと同じことをしている．テストしてみたところ，中身は"<div class="content text-secondary"></div>"のようになっていた．
+      /**
+       * options.element上（この場合はテキストのコンテンツが表示されているエリア内）でmouseupが行われた際に発火する関数．saveSelection()によってユーザが選択した範囲の開始位置と終了位置を含むオブジェクトを取得し，それも含めてbroadcastEvent()を行う．
+       * @param {e} e 現在発火しているmouseupイベント
+       */
+      $(options.element).on('mouseup', (e) => {
+        let sel = this.saveSelection(el);
+        this.broadcastEvent('select', {selection: sel, node: this.node ? this.node.data() : undefined});
+      });
+    }
+  }
+
+  /**
+   * @function action ツールのボタンが押された際に発火する関数．broadcastEvent()をしている［その際，パラメータの一部としてユーザが選択した範囲の開始位置と終了位置（のインデックス：テキストの先頭から数えて何文字目か）を渡している］．
+   * @todo このあたりの構造は全てのツールについてある程度共通しているはずなので，継承元のクラスだけに説明を書くとかの形でまとめられるような気もするが，それだとドキュメント上でこの関数の存在が抜け落ちてしまって中途半端，とかになるのかもしれないのでFAQとかに書くのがいいのかも
+   * @param {string} event イベントの種類
+   * @param {e} e 現在発火しているイベント
+   * @param {Object} nodes 押されたツールのボタンに対応する部品のオブジェクト
+   * @return {undefined}
+   * @memberof KitBuildTextSelectionTool
+   */
+  action(event, e, nodes) {
+    // console.error(event, e, nodes, this);
+    this.node = nodes[0]; // 中身を見てみたが，ひたすらArrayが入れ子になっていたのでnode.dataの方に意味があるのだと思う
+    let ss = this.node.data('selectStart'); // 最初はundefined
+    let se = this.node.data('selectEnd'); // 同上
+    this.broadcastEvent(`action`, {event: event, node: this.node.data(), start: ss, end: se});
+    return;
+  }
+
+  /**
+   * @function saveSelection ユーザが選択した範囲を取得し，その開始位置と終了位置を返す関数
+   * @param {HTMLElement} containerEl コンストラクタ内のconsole.warning()で表示されるメッセージでいう"Required selection element container selector"．
+   * 具体的な中身はoptionsとして何を渡すかによって異なるが，ここではコンテンツを表示しているダイアログの，コンテンツ部分のDOM要素（<div class="content text-secondary"></div>）のことだと解釈して問題ないと思う．
+   * @return {Object} startとendを含むオブジェクト．それぞれの説明は@propertyを使って書いた．
+   * @property {int} start ユーザが選択した範囲の開始位置
+   * @property {int} end ユーザが選択した範囲の終了位置
+   * @memberof KitBuildTextSelectionTool
+   * @todo こなれてきたら，@exampleとかを書くのもありかもしれない
+   */
+  saveSelection(containerEl) {
+    var range = window.getSelection().getRangeAt(0); // window.getSelection()まででユーザが選択した範囲のオブジェクト（Selectionオブジェクト）を取得できる．そして，getRangeAt(0)によってその中の最初のものを取ってくる（Chromeだとできないので必然的に0となるが，FireFoxだと複数選択ができるので他のインデックスを指定することもあるらしい）．
+    var preSelectionRange = range.cloneRange(); // rangeを複製（参照ではなく複製なので，どちらかのRangeオブジェクトを変更しても，もう一方に影響を与えることはない）
+    preSelectionRange.selectNodeContents(containerEl); // 引数として指定したノードの内側に始点と終点を設定する．https://lab.syncer.jp/Web/API_Interface/Reference/IDL/Range/selectNodeContents/ のイメージが分かりやすかった．
+    preSelectionRange.setEnd(range.startContainer, range.startOffset); // startContainerはRangeの始点を含むノードを表す（この場合はcontainerEl）．startOffsetはstartContainerの先頭から，Rangeの始点までのオフセット（文字数）を数値で表したもの．これらをそれぞれsetEnd()（Rangeの終点を指定する関数）の第1引数と第2引数に指定することで，Rangeの終点をユーザが選択した範囲の開始位置に合わせる．これについては文字での説明が難しいので，https://lab.syncer.jp/Web/API_Interface/Reference/IDL/Range/setEnd/ のデモでsetEnd()のイメージを掴んだ後，preSelectionRange.toString()をconsole.log()して確認するのがいいと思う．
+    var start = preSelectionRange.toString().length; // 上の行の処理により，toString()を使えばテキストの先頭からユーザが選択した範囲の開始位置までのテキストを取得できるようになったので，その文字数を取得する
+    // console.log(preSelectionRange.toString());
+    return {
+      start: start,
+      end: start + range.toString().length, // range.toString()にはユーザが選択した範囲の文字列が格納されているので，startにそれを足すことでユーザが選択した範囲の終了位置を取得できる
+    };
+  };
+
+  /**
+   * @function restoreSelection JSDocの仕様？の都合で，この関数についての説明は@descriptionタグを使って書いた
+   * @description ユーザが過去に選択した（i.e., 教授者が設定した）範囲が，コンテンツを表示しているダイアログを開き直した際や学習者側のダイアログで再現される（同じように選択された状態になる）ようにする関数
+   * @todo savedSelについての推測が合っているかを確かめるためにも，broadcastEvent()は読まないといけない
+   * @param {HTMLElement} containerEl コンテンツを表示しているダイアログの，コンテンツ部分のDOM要素（<div class="content text-secondary"></div>）［他のソースファイルでのこの関数の使われ方を見た感じ，この解釈｛saveSelection()におけるcontainerElと同じもの｝で大丈夫そう］
+   * @param {Object} savedSel 他のソースファイルでのこの関数の使われ方を見た感じ，ユーザが選択した範囲の開始位置（start）と終了位置（end）がsaveSelection()の後にbroadcastEvent()することで保存され（推測），それらを読み出してきて1つのオブジェクトとしてまとめたものをこの関数の引数として渡しているっぽい
+   * @param {number} savedSel.start ユーザが選択した範囲の開始位置
+   * @param {number} savedSel.end ユーザが選択した範囲の終了位置
+   * @memberof KitBuildTextSelectionTool
+   */
+  restoreSelection(containerEl, savedSel) {
+    var charIndex = 0, // 現在のテキスト位置
+      range = document.createRange(); // document.createRange()により，新しいRangeオブジェクトが生成される
+    range.setStart(containerEl, 0);
+    range.collapse(true); // Rangeの範囲を折り畳み，始点と終点の位置を同じにする（ここまでがRangeオブジェクトの初期化のようなものの一環だと思う）
+    var nodeStack = [containerEl], // 配列の宣言
+      node, // nodeStackの個々の要素を取り出す際に使用
+      foundStart = false, // 教授者が設定した範囲の開始位置が見つかったか
+      stop = false; // 教授者が設定した範囲の開始位置と終了位置が両方とも見つかったか
+
+    while (!stop && (node = nodeStack.pop())) { // 教授者が設定した範囲の開始位置と終了位置が両方とも見つかるか，nodeStackが空になるまでループ［ループの様子は，自分で追加したconsole.log()を見ながらだと分かりやすい］
+      // console.log(node);
+      if (node.nodeType == 3) { // popしたnodeがテキストノード（pタグなどの中の文字列そのもの）であれば［nodeTypeには他にも1（DOMノード：<div>や<p>など）や8（コメントノード）などがあるらしい］
+        // console.log(node.length);
+        var nextCharIndex = charIndex + node.length; // 現在のテキスト位置にnode.length（現在着目しているテキストノードの長さ）を加えることで次のテキストノード（段落など）の開始位置（次のテキスト位置）を計算する
+        // console.log(charIndex, nextCharIndex);
+        if ( // 教授者が設定した範囲の開始位置が見つかっておらず，かつそれが現在のテキスト位置と次のテキスト位置の間にある場合
+          !foundStart &&
+          savedSel.start >= charIndex &&
+          savedSel.start <= nextCharIndex
+        ) {
+          range.setStart(node, savedSel.start - charIndex); // 第2引数の計算結果がnode内での教授者が設定した範囲の開始位置となるので，それを引数に与えてRangeの始点を設定する
+          foundStart = true;
+        }
+        if ( // 教授者が設定した範囲の開始位置が見つかっており，同範囲の終点が現在のテキスト位置と次のテキスト位置の間にある場合
+          foundStart &&
+          savedSel.end >= charIndex &&
+          savedSel.end <= nextCharIndex
+        ) {
+          range.setEnd(node, savedSel.end - charIndex); // 始点と同じ要領で終点を設定
+          stop = true;
+        }
+        charIndex = nextCharIndex; // 現在のテキスト位置を更新（次のテキストノードまで移動）
+      } else { // popしたnodeがDOMノードであれば，その子ノードを1つずつ取り出してnodeStackに追加する
+        var i = node.childNodes.length;
+        // console.log(node.childNodes);
+        while (i--) {
+          nodeStack.push(node.childNodes[i]);
+          // console.log(nodeStack);
+        }
+      }
+    }
+
+    var sel = window.getSelection();
+    sel.removeAllRanges(); // Selectionオブジェクトから全てのRange（オブジェクト）を削除する
+    sel.addRange(range); // Selectionオブジェクトにrangeを追加する
+  };
+}
+
+class KitBuildDistanceColorTool extends KitBuildCanvasTool {
+  constructor(canvas, options) {
+    super(
+      canvas,
+      Object.assign(
+        {
+          showOn: KitBuildCanvasTool.SH_CONCEPT,
+          color: "#b32448",
+          nearColor: "#00db63",
+          farColor: "#b32448",
+          range: 500,
+          distanceReference: 300,
+          useDistanceReference: true,
+          useMagnet: true,
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-input-cursor-text" viewBox="-6 -6 28 28"><path d="M15 12h-4v3h4v-3ZM5 12H1v3h4v-3ZM0 8a8 8 0 1 1 16 0v8h-6V8a2 2 0 1 0-4 0v8H0V8Z"/></svg>',
+          gridPos: { x: 1, y: -1 },
+        },
+        options
+      )
+    );
+  }
+
+  showOn(what, node) {
+    return super.showOn(what, node) & this.settings.useMagnet;
+  }
+
+  action(event, e, nodes) {
+    // console.error(event, e, nodes, this);
+    this.node = nodes[0];
+    this.broadcastEvent(`action`, {node: this.node.data()});
+    return;
+  }
+
+  distance(posA, posB) {
+    return parseInt(Math.sqrt(Math.pow((posA.x - posB.x), 2) + Math.pow((posA.y - posB.y), 2)));
+  }
+
+  hexToRgb(hex) {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+  
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+  }
+
+  rgbToHex(r, g, b) {
+    return "#" + (1 << 24 | r << 16 | g << 8 | b).toString(16).slice(1);
+  }
+
+  getColor(distanceCurrent, distanceReference, colorRange) {
+
+    // get near and far color
+    let near = colorRange ? colorRange.nearColor : this.settings.nearColor;
+    let far = colorRange ? colorRange.farColor : this.settings.farColor;
+    near = this.hexToRgb(near);
+    far = this.hexToRgb(far);
+
+    // normalize range value to 0~255 
+    let distance = parseInt(((distanceCurrent - distanceReference) / this.settings.range) * 255);
+
+    // truncate invalid distance
+    if (distance < 0) distance = 0;
+    if (distance > 255) distance = 255;
+
+    // console.log(distance, distanceCurrent, distanceReference);
+    let r = near.r + (distance * (far.r - near.r))/255;
+    let g = near.g + (distance * (far.g - near.g))/255;
+    let b = near.b + (distance * (far.b - near.b))/255;
+    return this.rgbToHex(r, g, b);
+
+  }
+
+  showColor(node, conceptMap, canvas) {
+    // get associated link of this concept.
+    let cid = node.id();
+    let lid = null;
+    for(let lt of conceptMap.linktargets) {
+      if (lt.target_cid == cid) lid = lt.lid;
+    }
+    if (lid == null) {
+      for(let l of conceptMap.links) {
+        if (l.source_cid == cid) lid = l.lid;
+      } 
+    }
+
+    let distanceReference = 0; 
+    if (this.settings.useDistanceReference) 
+      distanceReference = this.settings.distanceReference;
+    else {
+      //calculate distance reference from goalmap
+      let refLink = null;
+      for(let l of conceptMap.links) {
+        // console.warn(l, lid);
+        if (l.lid == lid) refLink = l;
+      }
+      let refConcept = null;
+      for(let c of conceptMap.concepts) {
+        if (c.cid == cid) refConcept = c;
+      }
+      // console.error(refLink, refConcept);
+      distanceReference = this.distance({
+        x: parseInt(refLink.x),
+        y: parseInt(refLink.y)
+      },{
+        x: parseInt(refConcept.x),
+        y: parseInt(refConcept.y)
+      });
+    }
+
+    let link = canvas.cy.nodes(`#${lid}`);
+    let concept = node;
+    let distance = this.distance({
+      x: link.position().x,
+      y: link.position().y
+    },{
+      x: concept.position().x,
+      y: concept.position().y
+    });
+    let color = this.getColor(distance, distanceReference);
+    // console.warn(node, color, distance, distanceReference);
+    node.style('border-color', color);
+    node.style('border-opacity', 1.0);
+  }
+
+}
+
+/**
+ * バグ機能［教授者側：個々の部品へのバグ（想定し得る誤答）の追加，学習者側：バグが追加された部品について，正しいラベルとバグの一覧からラベルを選択することで解答］を提供するツール．
+ * 見たところ，このファイルで扱っているのは教授者側の機能だけっぽい．
+ */
+class KitBuildBugTool extends KitBuildCanvasTool {
+  /**
+   * @constructs KitBuildBugTool
+   * @description 最後にhandleEvent()を呼んでいる
+   * @param {Object} canvas Cytoscape.jsの描画対象となるcanvas要素
+   * @param {Object} options ツール描画にあたってのオプション
+   */
+  constructor(canvas, options) {
+    super(
+      canvas,
+      Object.assign(
+        {
+          showOn: KitBuildCanvasTool.SH_CONCEPT | KitBuildCanvasTool.SH_LINK,
+          dialogContainerSelector: 'body',
+          color: "#dc3545",
+          width: '300px',
+          icon: '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-input-cursor-text" viewBox="-6 -6 28 28">  <path d="M4.355.522a.5.5 0 0 1 .623.333l.291.956A4.979 4.979 0 0 1 8 1c1.007 0 1.946.298 2.731.811l.29-.956a.5.5 0 1 1 .957.29l-.41 1.352A4.985 4.985 0 0 1 13 6h.5a.5.5 0 0 0 .5-.5V5a.5.5 0 0 1 1 0v.5A1.5 1.5 0 0 1 13.5 7H13v1h1.5a.5.5 0 0 1 0 1H13v1h.5a1.5 1.5 0 0 1 1.5 1.5v.5a.5.5 0 1 1-1 0v-.5a.5.5 0 0 0-.5-.5H13a5 5 0 0 1-10 0h-.5a.5.5 0 0 0-.5.5v.5a.5.5 0 1 1-1 0v-.5A1.5 1.5 0 0 1 2.5 10H3V9H1.5a.5.5 0 0 1 0-1H3V7h-.5A1.5 1.5 0 0 1 1 5.5V5a.5.5 0 0 1 1 0v.5a.5.5 0 0 0 .5.5H3c0-1.364.547-2.601 1.432-3.503l-.41-1.352a.5.5 0 0 1 .333-.623zM4 7v4a4 4 0 0 0 3.5 3.97V7H4zm4.5 0v7.97A4 4 0 0 0 12 11V7H8.5zM12 6a3.989 3.989 0 0 0-1.334-2.982A3.983 3.983 0 0 0 8 2a3.983 3.983 0 0 0-2.667 1.018A3.989 3.989 0 0 0 4 6h8z"/></svg>',
+          gridPos: { x: -1, y: -1 },
+        },
+        options
+      )
+    );  
+    this.handleEvent();
+  }
+
+  /**
+   * @function action ツールのボタンが押された際に発火する関数．broadcastEvent()をしている．
+   * @param {string} event イベントの種類
+   * @param {e} e 現在発火しているイベント
+   * @param {Object} nodes 押されたツールのボタンに対応する部品のオブジェクト
+   * @return {undefined}
+   * @memberof KitBuildBugTool
+   */
+  action(event, e, nodes) {
+    // console.error(event, e, nodes, this);
+    this.node = nodes[0];
+    this.broadcastEvent(`action`, {node: this.node.data()});
+    return;
+  }
+
+  /**
+   * @function handleEvent イベントハンドラを定義する関数
+   * @memberof KitBuildBugTool
+   */
+  handleEvent() {
+    /**
+     * bug-dialog（ツールのボタンが押された際に表示されるダイアログ）内のbt-set-bug（"Set Bug"ボタン）が押された際に発火する関数．フォームから正しいラベルとバグを取得し，node.dataに追加する．
+     * @param {e} e 現在発火しているclickイベント
+     * @todo this.dialogがどこから来ているかは不明だが，this.dialog.hide()ではbug-dialogを隠してくれている
+     */
+    $('#bug-dialog').on('click', '.bt-set-bug', (e) => {
+      let bugLabel = $('#bug-dialog .input-bug-label').val();
+      let correctLabel = $('#bug-dialog .input-correct-label').val();
+      this.node.data('correct-label', correctLabel);
+      this.node.data('bug-label', bugLabel);
+      UI.info('Bug information has been set.').show();
+      if (this.dialog) this.dialog.hide();
+      // console.log(this.node.data(), correctLabel, bugLabel, this, this.dialog);
+    });
+
+    /**
+     * bug-dialog（ツールのボタンが押された際に表示されるダイアログ）内のbt-remove-bug（"Remove Bug"ボタン）が押された際に発火する関数．"Bug Label"のフォームを空にし，node.dataからcorrect-labelとbug-labelを削除する．
+     * @param {e} e 現在発火しているclickイベント
+     */
+    $('#bug-dialog').on('click', '.bt-remove-bug', (e) => {
+      let correctLabel = this.node.data('correct-label');
+      if (correctLabel) { // correctLabelを"Correct Label"のフォームの内容および部品のラベルとして設定
+        $('#bug-dialog .input-correct-label').val(correctLabel);
+        this.node.data('label', correctLabel);
+      }
+      $('#bug-dialog .input-bug-label').val('');
+      this.node.removeData('correct-label bug-label');
+      // console.log(this.node.data(), correctLabel);
+    });
+  }
+}
+
 class KitBuildCanvasToolCanvas {
   constructor(canvas, options) {
     // cache the Cytoscape canvas
@@ -1286,6 +1665,15 @@ class KitBuildCanvasToolCanvas {
     return this;
   }
 
+  /**
+   * @function addTool 部品の周りにツールを追加する関数
+   * @param {string} id ツールのID（任意）
+   * @param {Object} tool 追加するツールのインスタンス
+   * @param {Object} options ツール描画にあたってのオプション．ここでは，gridPos（部品に対して，どの位置にツールを描画するか）のみを取り扱っているっぽい．
+   * @return {Object} this.tools.set()のdefinitionを見に行ったら/Applications/Visual Studio Code.app/Contents/Resources/app/extensions/node_modules/typescript/lib/lib.es2015.collection.d.tsとかいう謎のファイルが開かれたのでよく分からないが，とりあえずこれでcanvas上にツールが描画される．
+   * @todo this.tools.set()について詳しくなる
+   * @memberof KitBuildCanvasToolCanvas
+   */
   addTool(id, tool, options) {
     tool.gridPos = Object.assign(
       tool.gridPos,
@@ -2451,6 +2839,7 @@ class UndoRedoMove {
     });
   }
 }
+
 class UndoRedoMoves {
   constructor(data) {
     Object.assign(this, data);

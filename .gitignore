@@ -1,3 +1,5 @@
 server/node_modules
 /server/package-lock.json
 mysql-data/
+.shared/config/db.ini
+.shared/config/config.ini

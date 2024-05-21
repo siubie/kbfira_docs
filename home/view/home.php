@@ -26,9 +26,8 @@
     </div>
 
     <div class="pricing-header p-3 pb-md-4 mx-auto text-center mb-5">
-      <h1 class="display-4 fw-normal">Personal Development Server for Kit-Build Concept Map</h1>
-      <h2 class="display-4 fw-normal">This is a trial and error server do not use for real experiment</h2>
-      <p class="mx-auto col-6 col-md-8 mt-5 mb-5"><span class="fst-italic fw-bold">The idea:</span> Learning with concept map is fun. <strong>Solve the puzzle:</strong> Learn by recomposing a kit while sharing one's knowledge and understanding. And <strong>what's great?</strong> Kit-Build made analysis to the recomposition easy. <strong>Real-time collaboration</strong> in concept mapping? No worries, Kit-Build system supports it!</p>
+      <h1 class="display-4 fw-normal">Kit Build Development Server</h1>
+      <p class="mx-auto col-6 col-md-8 mt-5 mb-5">This server is for development only, be aware of your experiment data</p>
       <div class="mx-auto">
         <a type="button" href="<?php echo $this->location('../demo'); ?>" class="btn btn-lg btn-primary mx-2"><i class="bi bi-check-circle"></i> Try the demo</a>
         <a type="button" class="btn btn-lg btn-danger mx-2" href="https://www.youtube.com/watch?v=q-zgODOKFN4"><i class="bi bi-youtube"></i> Watch Intro</a>

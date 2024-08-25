@@ -4,3 +4,5 @@ mysql-data/
 .shared/config/db.ini
 .shared/config/config.ini
 .shared/config/db.ini
+cmap/runtime/config.ini
+kitbuild/runtime/config.ini

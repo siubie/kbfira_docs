@@ -7,12 +7,12 @@ class CmapApp {
   constructor() {
     this.kbui = KitBuildUI.instance(CmapApp.canvasId);
     let canvas = this.kbui.canvases.get(CmapApp.canvasId);
-    // canvas.addToolbarTool(KitBuildToolbar.UNDO_REDO, { priority: 3 });
-    // canvas.addToolbarTool(KitBuildToolbar.NODE_CREATE, { priority: 2 });
-    // canvas.addToolbarTool(KitBuildToolbar.UTILITY, { priority: 5 });
-    // canvas.addToolbarTool(KitBuildToolbar.CAMERA, { priority: 4 });
-    // canvas.addToolbarTool(KitBuildToolbar.SHARE, { priority: 6 });
-    // canvas.addToolbarTool(KitBuildToolbar.LAYOUT, { priority: 7 });
+    canvas.addToolbarTool(KitBuildToolbar.UNDO_REDO, { priority: 3 });
+    canvas.addToolbarTool(KitBuildToolbar.NODE_CREATE, { priority: 2 });
+    canvas.addToolbarTool(KitBuildToolbar.UTILITY, { priority: 5 });
+    canvas.addToolbarTool(KitBuildToolbar.CAMERA, { priority: 4 });
+    canvas.addToolbarTool(KitBuildToolbar.SHARE, { priority: 6 });
+    canvas.addToolbarTool(KitBuildToolbar.LAYOUT, { priority: 7 });
     canvas.toolbar.render();
 
     canvas.addCanvasTool(KitBuildCanvasTool.DELETE);

@@ -1,7 +1,7 @@
 {
   "dependencies": {
     "ini": "^2.0.0",
-    "socket.io": "^4.4.0",
+    "socket.io": "^4.7.5",
     "uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.4.0",
     "zlib": "^1.0.5"
   },
